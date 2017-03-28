@@ -3,15 +3,12 @@ var URL_Youtube = "https://www.googleapis.com/youtube/v3/search";
 var api_key = 'AIzaSyCk4yl042SL6pQlY4ru4XhzhnAbo1XrzQ8'; 
 
 $(document).ready(function(){
-	$('.js-submit').submit(function(event){
+	$('#js-search-form').submit(function(event){
 		event.preventDefault();
-		var result = $(this).val();
-		getDataFromYoutube(result, function(data){
-			for (var i = data.items.length - 1; i >= 0; i--) {
-				//data.items[i].snippet.title;
-				//data.items[i].snippet.thumbnails.default.url;
-			}
-		});
+		var result = $('.query').val();
+		console.log(result);
+		getDataFromYoutube(result, displayVideos);
+
 	});
 });
 
@@ -28,6 +25,7 @@ function getDataFromYoutube(search, callback){
 	    type: 'GET',
 	    success: callback
 	};
+	console.log(settings);
 	$.ajax(settings);
 	/*$ === jQuery('h2') === document.getElementByTagName('h2');
 			jQuery returns a jQuery object, .parent(), .find(), .css(), .text()
@@ -46,5 +44,18 @@ function getDataFromYoutube(search, callback){
 			}
 
 	*/
+}
+
+function displayVideos(data){
+	var searchResults= data.items;
+	$('.js-results').html('<h2>Here are the Top 5 videos</h2>');
+	console.log(data.items);
+	if(searchResults.length !== 0){
+		for(var i = 0; i<searchResults.length; i++){
+			$('.js-results').append('<p>'+searchResults[i].snippet.title+'</p>'+'<a href="https://www.youtube.com/watch?v='+searchResults[i].id.videoId+'"><img src="'+searchResults[i].snippet.thumbnails.high.url+'" alt="Video" class="thumbnails"></a>');
+		}
+	} else {
+		$('.js-results').html('<p>No Results</p>');
+	}
 }
 
